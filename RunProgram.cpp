@@ -244,6 +244,8 @@ using namespace std;
 
 	 	std::random_shuffle ( particles.begin(), particles.end() );
 
+	 	cout << "==========================================================" << endl;
+	 	cout << "Beginning PID Generation"<< endl;
 	 	cout << "Total Number of Pions: "<< numPions << endl;
 		cout << "Total Number of Electrons: "<< numElectrons << endl;
 
