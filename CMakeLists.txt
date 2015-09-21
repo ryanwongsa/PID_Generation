@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 project(PID_GENERATION)
 set (CMAKE_CXX_FLAGS "-fPIC -g -gdwarf-3 -std=c++11")
 set (SOURCES

@@ -10,6 +10,9 @@
 #include "NeuronLayers.h"
 #include <stdlib.h>     /* atoi */
 #include <stdio.h>      /* printf, fgets */
+#include <cstdlib> 
+#include <algorithm> 
+#include <ctime>
 
 using namespace std;
 
@@ -215,9 +218,11 @@ using namespace std;
 		return numE;
 	}
 
-	void calculateNumbersOfParticles(vector<ParticleInformation>& particles)
+	void calculateNumbersOfParticles(vector<ParticleInformation>& particles, int begin)
 	{
-		for(int i=0;i<particles.size();i++)
+		numElectrons=0;
+		numPions=0;
+		for(int i=begin;i<particles.size();i++)
 		{
 			if(particles[i].getType()=="ELECTRON")
 				numElectrons++;
@@ -229,13 +234,19 @@ using namespace std;
 
 	int main(int argc, char const *argv[])
 	{
-	 	MaxTimeBinValue = 3*1024;	
-
+	 	MaxTimeBinValue = 4*1024;	
+	 	std::srand ( unsigned ( std::time(0) ) );
 	// 	cout << "Creating PID Generator Using Neural Networks" << endl;
 
 	 	DataRetrieval dr(argv[1]);
 	 	particles = dr.getParticles();
-	 	calculateNumbersOfParticles(particles);
+	 	calculateNumbersOfParticles(particles,0);
+
+	 	std::random_shuffle ( particles.begin(), particles.end() );
+
+	 	cout << "Total Number of Pions: "<< numPions << endl;
+		cout << "Total Number of Electrons: "<< numElectrons << endl;
+
 	 //	cout << particles.size() << endl;
 
 	//	displayParticles();
@@ -246,10 +257,14 @@ using namespace std;
 		numHiddenNodes = atoi(argv[3]);
 		numOutputs = atoi(argv[4]);
 
-		double trainPercent =1;
+		double trainPercent =0.8;
 		double untrainedPercent = 1-trainPercent;
 
 		cout << "Starting Neural Network" << endl;
+		cout << "Number of Inputs: " << numInputs << endl;
+		cout << "Number of Hidden Layers: " << numHiddenLayers << endl;
+		cout << "Number of Hidden Nodes: " << numHiddenNodes << endl;
+		cout << "Number of Outputs: " << numOutputs << endl; 
 	
 		NeuronLayers neuronLayers(numInputs, numHiddenLayers, numHiddenNodes, numOutputs);
 
@@ -259,8 +274,8 @@ using namespace std;
 		int generations = atoi(argv[5]);
 		for(int i=0;i<generations;i++)
 		{
-			cout << "Generation No: "<< i<< " out of " << generations << endl;
-			for(int u=0;u<particles.size()*trainPercent;u++) //0.502624
+			//cout << "Generation No: "<< i<< " out of " << generations << endl;
+			for(int u=0;u<particles.size()*trainPercent;u++) 
 			{
 				ParticleInformation particle = particles[u];
 
@@ -284,16 +299,17 @@ using namespace std;
 
 		
 		
+		calculateNumbersOfParticles(particles,particles.size()* trainPercent);
 
 		
 
-		fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*untrainedPercent);
+		fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent);
 
-		makeNeuralNetworkHistogram(particles, particles.size()* untrainedPercent);
+		makeNeuralNetworkHistogram(particles, particles.size()* trainPercent);
 		printNeuralNetworkHistogram();
 
-		cout << "Number of Pions: "<< numPions << endl;
-		cout << "Number of Electrons: "<< numElectrons << endl;
+		cout << "Untrained Number of Pions: "<< numPions << endl;
+		cout << "Untrained Number of Electrons: "<< numElectrons << endl;
 
 		int electronNo = calcEfficiency(numPions*0.9);
 
