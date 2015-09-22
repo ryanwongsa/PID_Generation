@@ -45,74 +45,74 @@ using namespace std;
 		}
 	}
 
-	// void summationMethod()
-	// {
-	// 	int max =0;
-	// 	int min =27*1024*4;
-	// 	for(int u=0;u<particles.size();u++)
-	// 	{
-	// 		SumPIDCalculation pidsum(particles[u]);
+	void summationMethod()
+	{
+		int max =0;
+		int min =27*1024*4;
+		for(int u=0;u<particles.size();u++)
+		{
+			SumPIDCalculation pidsum(particles[u]);
 
-	// 		cout << pidsum.getSum() << endl;
+			//cout << pidsum.getSum() << endl;
 
-	// 		pidParticle.push_back(pidsum);
-	// 		if(max<pidsum.getSum())
-	// 			max=pidsum.getSum();
+			pidParticle.push_back(pidsum);
+			if(max<pidsum.getSum())
+				max=pidsum.getSum();
 			
-	// 		if(min>pidsum.getSum())
-	// 			min=pidsum.getSum();
-	// 	}
+			if(min>pidsum.getSum())
+				min=pidsum.getSum();
+		}
 
-	// 	for(int u=0;u<particles.size();u++)
-	// 	{
-	// 		pidParticle[u].setPID(min, max);
-	// 	}
+		for(int u=0;u<particles.size();u++)
+		{
+			pidParticle[u].setPID(min, max);
+		}
 
-	// 	// DISPLAYS SUM PID NUMBERS
-	// 	for(int u=0;u<particles.size();u++)
-	// 	{
-	// 		cout << particles[u].getType() << ": " << pidParticle[u].getPID() << endl;
-	// 	}
-
-
-	// 	int sumpidHistogramElectron[256];
-	// 	std::fill(sumpidHistogramElectron, sumpidHistogramElectron+256,0);
-	// 	int sumpidHistogramPion[256];
-	// 	std::fill(sumpidHistogramPion, sumpidHistogramPion+256,0);
+		// DISPLAYS SUM PID NUMBERS
+		// for(int u=0;u<particles.size();u++)
+		// {
+		// 	cout << particles[u].getType() << ": " << pidParticle[u].getPID() << endl;
+		// }
 
 
-	// 	for(int i=0;i<particles.size();i++)
-	// 	{
-	// 		ParticleInformation particle = particles[i];
+		int sumpidHistogramElectron[256];
+		std::fill(sumpidHistogramElectron, sumpidHistogramElectron+256,0);
+		int sumpidHistogramPion[256];
+		std::fill(sumpidHistogramPion, sumpidHistogramPion+256,0);
 
-	// 		string type = particle.getType();
-	// 		if(type==("ELECTRON"))
-	// 		{
-	// 			//System.out.println("hred->Fill("+pidParticle.get(i).getPID()+");");
-	// 			sumpidHistogramElectron[pidParticle[i].getPID()]++;
-	// 		}
-	// 		else if(type==("PION"))
-	// 		{
-	// 			//System.out.println("hblue->Fill("+pidParticle.get(i).getPID()+");");
-	// 			sumpidHistogramPion[pidParticle[i].getPID()]++;
-	// 		}
-	// 	}
 
-	// 	cout << "Electron distribution: "<< endl;
-	// 	for(int i=0;i<256;i++)
-	// 	{
-	// 		cout<< " "<< sumpidHistogramElectron[i];
-	// 	}
-	// 	cout << endl;
+		for(int i=0;i<particles.size();i++)
+		{
+			ParticleInformation particle = particles[i];
 
-	// 	cout << "Pion distribution: "<< endl;
-	// 	for(int i=0;i<256;i++)
-	// 	{
-	// 		cout<<" "<<sumpidHistogramPion[i];
-	// 	}
-	// 	cout << endl;
+			string type = particle.getType();
+			if(type==("ELECTRON"))
+			{
+			//	cout <<"hred->Fill("<<pidParticle[i].getPID()<<");"<< endl;
+				sumpidHistogramElectron[pidParticle[i].getPID()]++;
+			}
+			else if(type==("PION"))
+			{
+			//	cout << "hblue->Fill("<<pidParticle[i].getPID()<<");"<< endl;
+				sumpidHistogramPion[pidParticle[i].getPID()]++;
+			}
+		}
 
-	// }
+		cout << "Electron distribution: "<< endl;
+		for(int i=0;i<256;i++)
+		{
+			cout<< " "<< sumpidHistogramElectron[i];
+		}
+		cout << endl;
+
+		cout << "Pion distribution: "<< endl;
+		for(int i=0;i<256;i++)
+		{
+			cout<<" "<<sumpidHistogramPion[i];
+		}
+		cout << endl;
+
+	}
 
 
 
@@ -252,7 +252,7 @@ using namespace std;
 	 //	cout << particles.size() << endl;
 
 	//	displayParticles();
-		//summationMethod();
+		summationMethod();
 
 		numInputs=27;
 		numHiddenLayers =atoi(argv[2]);
