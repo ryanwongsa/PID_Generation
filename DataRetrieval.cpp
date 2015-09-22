@@ -14,7 +14,6 @@
 		//particle = new ArrayList<ParticleInformation>();
 		pidParticle = pidPart;
 		//System.out.println(pidParticle.size());
-		formatOutput(lines);
 	}
 
 	bool BothAreSpaces(char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); }
@@ -34,63 +33,6 @@
 	    std::vector<std::string> elems;
 	    split(s, delim, elems);
 	    return elems;
-	}
-
-	void DataRetrieval :: formatOutput(vector<string>& lines) 
-	{
-		int count=0;
-		string particleType ="UNKNOWN";
-		for(int i=0;i<lines.size();i++)
-		{
-			string line = lines[i];
-
-
- 			if (( (line.find("track") != string::npos) || (line.find("----------------------------------------------------------")!= string::npos) ) && (i+1<lines.size()))
- 			{
- 				ParticleInformation currParticle;
-
-				if(!(lines[i+1].compare("ELECTRON") ) || !(lines[i+1].compare("PION")))
-				{
-					particleType =lines[i+1];
-					currParticle.setType(particleType); 	 //constructor call
-					cout << lines[i+1] << endl;
-					i=i+2;
-				}
-				else
-				{
-					if((i+1<lines.size()) && (lines[i+1].find("sum") != string::npos ) )
-					{
-						currParticle.setType(particleType); 	 //constructor call
-						i=i+1;
-					}
-					else
-						i++;
-				}
-
-				int j=i;
-				while(lines[j].find("sum") != string::npos)
-				{
-					vector<string> parts = split(lines[j], ' ');
-
-					for(int a=1;a<28;a++)
-					{	
-						currParticle.addTimebin(a-1, atoi(parts[a].c_str()));
-					}
-				  	j++;
-				 }
-				 i=j-1;
-				 
-				
-				
-				if(currParticle.getType()!=("UNKNOWN"))
-				{
-					particle.push_back(currParticle);
-					cout << pidParticle[count].getPID() << endl;
-					//System.out.println(pidParticle[count].getPID());
-					count++;
-				}
- 			}
-		}
 	}
 
 
@@ -113,11 +55,13 @@
 				if(!(lines[i+1].compare("ELECTRON") ) || !(lines[i+1].compare("PION")))
 				{
 					particleType =lines[i+1];
+					currParticle.helper(false);
 					currParticle.setType(particleType); 	 //constructor call
 					i=i+2;
 				}
 				else
 				{
+					currParticle.helper(true);
 					if((i+1<lines.size()) && (lines[i+1].find("sum") != string::npos ) )
 					{
 						currParticle.setType(particleType); 	 //constructor call

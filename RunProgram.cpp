@@ -88,12 +88,20 @@ using namespace std;
 			string type = particle.getType();
 			if(type==("ELECTRON"))
 			{
-			//	cout <<"hred->Fill("<<pidParticle[i].getPID()<<");"<< endl;
+				// if(!particle.getHelper())
+				// 	cout << "ELECTRON: " <<endl<< "  "<< pidParticle[i].getPID()<< endl;
+				// else
+				// 	cout << "  " << pidParticle[i].getPID()<< endl;
+				//cout <<"hred->Fill("<<pidParticle[i].getPID()<<");"<< endl;
 				sumpidHistogramElectron[pidParticle[i].getPID()]++;
-			}
+			} 
 			else if(type==("PION"))
 			{
-			//	cout << "hblue->Fill("<<pidParticle[i].getPID()<<");"<< endl;
+				// if(!particle.getHelper())
+				// 	cout << "PION: " <<endl<< "  "<< pidParticle[i].getPID()<< endl;
+				// else
+				// 	cout <<"  " << pidParticle[i].getPID()<< endl;
+				//cout << "hblue->Fill("<<pidParticle[i].getPID()<<");"<< endl;
 				sumpidHistogramPion[pidParticle[i].getPID()]++;
 			}
 		}
@@ -242,7 +250,8 @@ using namespace std;
 	 	particles = dr.getParticles();
 	 	calculateNumbersOfParticles(particles,0);
 
-	 	std::random_shuffle ( particles.begin(), particles.end() );
+	 	//SHUFFLE WILL MESS OUTPUT UP.. BUT STILL NEED TO SHUFFLE FOR THE NEURAL NETWORK
+	 	//std::random_shuffle ( particles.begin(), particles.end() );
 
 	 	cout << "==========================================================" << endl;
 	 	cout << "Beginning PID Generation"<< endl;

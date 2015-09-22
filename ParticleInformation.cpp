@@ -55,3 +55,13 @@
 	{
 		return sumPid;
 	}
+
+	void ParticleInformation :: helper(bool h)
+	{
+		help =h;
+	}
+
+	bool ParticleInformation :: getHelper()
+	{
+		return help;
+	}
