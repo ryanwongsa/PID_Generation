@@ -223,6 +223,7 @@ using namespace std;
 			numE+=pidNNHistogramElectron[i];
 		}
 
+		//return histogramLayerNo;
 		return numE;
 	}
 
@@ -251,7 +252,7 @@ using namespace std;
 	 	calculateNumbersOfParticles(particles,0);
 
 	 	//SHUFFLE WILL MESS OUTPUT UP.. BUT STILL NEED TO SHUFFLE FOR THE NEURAL NETWORK
-	 	//std::random_shuffle ( particles.begin(), particles.end() );
+	 	std::random_shuffle ( particles.begin(), particles.end() );
 
 	 	cout << "==========================================================" << endl;
 	 	cout << "Beginning PID Generation"<< endl;
@@ -261,7 +262,7 @@ using namespace std;
 	 //	cout << particles.size() << endl;
 
 	//	displayParticles();
-		summationMethod();
+	//	summationMethod();
 
 		numInputs=27;
 		numHiddenLayers =atoi(argv[2]);
@@ -282,10 +283,13 @@ using namespace std;
 		// neuronLayers.displayNeuronNetwork();
 		// neuronLayers.displayLinkNetwork();
 
+		calculateNumbersOfParticles(particles,particles.size()* trainPercent);
+
+
 		int generations = atoi(argv[5]);
 		for(int i=0;i<generations;i++)
 		{
-			//cout << "Generation No: "<< i<< " out of " << generations << endl;
+		//	cout << "Generation No: "<< i<< " out of " << generations << endl;
 			for(int u=0;u<particles.size()*trainPercent;u++) 
 			{
 				ParticleInformation particle = particles[u];
@@ -305,12 +309,17 @@ using namespace std;
 			}
 			// neuronLayers.displayNeuronNetwork();
 			// neuronLayers.displayLinkNetwork();
-				
+			// fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent);	
+			// makeNeuralNetworkHistogram(particles, particles.size()* trainPercent);
+			// //printNeuralNetworkHistogram();
+			// int electronNo = calcEfficiency(numPions*0.9);
+
+			// cout<< "Effiency (Histogram Layer count): " << electronNo <<endl;
 		}
 
 		
 		
-		calculateNumbersOfParticles(particles,particles.size()* trainPercent);
+	//	calculateNumbersOfParticles(particles,particles.size()* trainPercent);
 
 		
 
@@ -324,7 +333,7 @@ using namespace std;
 
 		int electronNo = calcEfficiency(numPions*0.9);
 
-		cout<< "Effiency: " << electronNo / (double) numElectrons<<endl;
+		cout<< "Effiency (Electron count): " << electronNo <<endl;
 		return 0;
 	}
 
