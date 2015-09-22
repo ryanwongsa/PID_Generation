@@ -24,7 +24,6 @@ public:
 
 	vector<string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 	vector<string> split(const std::string &s, char delim);
-	void formatOutput(vector<string>& lines);
 	vector<ParticleInformation> getParticles();
 	void formatData(vector<string>& lines);
 	vector<string> dataExtraction(string file);

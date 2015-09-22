@@ -9,6 +9,7 @@ class ParticleInformation
 	float  *timebin;
 	int pid;
 	int sumPid;
+	bool help;
 
 public:
 
@@ -22,5 +23,6 @@ public:
 	int getNeuralNetworkPID() const;
 	void setSumPID(int value);
 	int getSumPID() const;
-
+	void helper(bool h);
+	bool getHelper();
 };
