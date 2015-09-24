@@ -12,6 +12,9 @@
 #include <cstdlib>
 #include <ctime> 
 
+#define SQR(A) ( (A) * (A) ) 
+
+
 class NeuronLayers
 {
 	int numInput;
@@ -21,7 +24,7 @@ class NeuronLayers
 	int numNeuronLayers;
 
 	float LEARNING_RATE = (float) 1;
-	float MOMENTUM = (float) 0.5;
+	float MOMENTUM = (float) 1;
 
 	vector<vector<Neuron>> neuron;
  
@@ -41,5 +44,6 @@ public:
 	void forwardPass();
 	void backwardPass();
 	float getOutput(int i);
+	float getErrorOutput(int i);
 };
 

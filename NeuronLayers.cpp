@@ -94,7 +94,6 @@ void NeuronLayers :: initialiseLinks()
 void NeuronLayers :: fillInputNeuron(int i, float value)
 {
 	neuron[0][i].setInput(value);
-	//cout << neuron[0][i].getA() << " ";
 
 }
 
@@ -160,13 +159,19 @@ void NeuronLayers :: forwardPass()
 	}	
 }
 
+float NeuronLayers :: getErrorOutput(int i)
+{
+	// cout << endl;
+	// cout << neuron[numNeuronLayers-1][i].getTarget()<<"->"<<neuron[numNeuronLayers-1][i].getA() << " error : "<<SQR(neuron[numNeuronLayers-1][i].getTarget()-neuron[numNeuronLayers-1][i].getA()) << endl;
+	return SQR(neuron[numNeuronLayers-1][i].getTarget()-neuron[numNeuronLayers-1][i].getA());
+}
+
 void NeuronLayers :: backwardPass()
 {
 	for(int i=0;i<neuron[numNeuronLayers-1].size();i++)
 	{
 		float error = neuron[numNeuronLayers-1][i].getDerivIn() * (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
 		neuron[numNeuronLayers-1][i].setError(error);
-		//cout<< "Output Errors: "<< error<< endl;
 	}
 
 	for(int l=numNeuronLayers-2;l>=0;l--)
@@ -197,18 +202,5 @@ void NeuronLayers :: backwardPass()
 		}
 	}
 
-	// for(int l=links.size()-1;l<links.size();l++)
-	// {
-	// 	for(int i=0;i<links[l].size();i++)
-	// 	{
-	// 		for(int j=0;j<links[l][i].size();j++)
-	// 		{
-	// 			float newWeight = links[l][i][j].getWeight() + LEARNING_RATE *neuron[l][i].getA() * neuron[l+1][j].getError()+ MOMENTUM*links[l][i][j].getDeltaWeight();
-	// 			cout << "CurrentWeight: " << links[l][i][j].getWeight() << " Neuron A: " << neuron[l][i].getA()<< " Error: "<<neuron[l+1][j].getError()<<  " DeltaWeight: "<< links[l][i][j].getDeltaWeight()<<" TOTAL: "<<newWeight<<endl;
-	// 			links[l][i][j].setWeight(newWeight);
-	// 			links[l][i][j].setDeltaWeight(LEARNING_RATE *neuron[l][i].getA() * neuron[l+1][j].getError());
-	// 		}
-	// 	}
-	// }
 }
 

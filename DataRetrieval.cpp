@@ -4,16 +4,13 @@
 	DataRetrieval :: DataRetrieval(string file)	
 	{
 		vector<string>  lines = dataExtraction(file);
-		//particle = new ArrayList<ParticleInformation>();
 		formatData(lines);
 	}
 
 	DataRetrieval :: DataRetrieval(string file, vector<SumPIDCalculation>& pidPart)
 	{
 		vector<string>  lines = dataExtraction(file);
-		//particle = new ArrayList<ParticleInformation>();
 		pidParticle = pidPart;
-		//System.out.println(pidParticle.size());
 	}
 
 	bool BothAreSpaces(char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); }
@@ -77,18 +74,10 @@
 					//cout<< lines[i] << endl;	// THIS LINE SPOTS FOR ERRORS
 
 					vector<string> parts = split(lines[j], ' ');
-					// cout << parts.size() << endl;
-					// for(int d=0;d<parts.size();d++)
-					// {
-					// 	cout << " "<< parts[d];
-					// }
-					// cout << endl;
 					for(int a=1;a<28;a++)
 					{
-						//cout << " "<<  atoi(parts[a].c_str());
 						currParticle.addTimebin(a-1, atoi(parts[a].c_str()));
 					}
-					//cout << endl;
 				  	j++;
 				 }
 				 i=j-1;
@@ -122,10 +111,8 @@
 		{
 			std::string::iterator new_end = std::unique(lines[i].begin(), lines[i].end(), BothAreSpaces);
 			lines[i].erase(new_end, lines[i].end());   
-			//cout << lines[i] << endl;
 
 		}
-		//cout << end
 
         return lines;
 	}

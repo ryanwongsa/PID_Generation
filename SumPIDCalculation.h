@@ -17,7 +17,7 @@ public:
 
 	int getSum();
 	void setSum();
-	void setPID(int min, int max);
+	void setPID(int min, int max, int maxPID);
 	int getPID() const;
 
 

@@ -1,35 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <math.h>    
-#include "ParticleInformation.h"
-#include "SumPIDCalculation.h"
-#include "DataRetrieval.h"
-#include "NeuronLayers.h"
-#include <stdlib.h>     /* atoi */
-#include <stdio.h>      /* printf, fgets */
-#include <cstdlib> 
-#include <algorithm> 
-#include <ctime>
-
-using namespace std;
-
-	vector<ParticleInformation> particles;
-	int numHiddenLayers;
-	int numHiddenNodes;
-	int numInputs;
-	int numOutputs;
-	int pidNNHistogramElectron[256];
-	int pidNNHistogramPion[256];
-
-	int numElectrons=0;
-	int numPions=0;
-
-	
-	int MaxTimeBinValue;
-	vector<SumPIDCalculation> pidParticle;
+#include "RunProgram.h"
 
 	void displayParticles()
 	{
@@ -65,20 +34,13 @@ using namespace std;
 
 		for(int u=0;u<particles.size();u++)
 		{
-			pidParticle[u].setPID(min, max);
+			pidParticle[u].setPID(min, max,maxPIDvalue-1);
 		}
 
-		// DISPLAYS SUM PID NUMBERS
-		// for(int u=0;u<particles.size();u++)
-		// {
-		// 	cout << particles[u].getType() << ": " << pidParticle[u].getPID() << endl;
-		// }
-
-
-		int sumpidHistogramElectron[256];
-		std::fill(sumpidHistogramElectron, sumpidHistogramElectron+256,0);
-		int sumpidHistogramPion[256];
-		std::fill(sumpidHistogramPion, sumpidHistogramPion+256,0);
+		int sumpidHistogramElectron[maxPIDvalue];
+		std::fill(sumpidHistogramElectron, sumpidHistogramElectron+maxPIDvalue,0);
+		int sumpidHistogramPion[maxPIDvalue];
+		std::fill(sumpidHistogramPion, sumpidHistogramPion+maxPIDvalue,0);
 
 
 		for(int i=0;i<particles.size();i++)
@@ -107,14 +69,14 @@ using namespace std;
 		}
 
 		cout << "Electron distribution: "<< endl;
-		for(int i=0;i<256;i++)
+		for(int i=0;i<maxPIDvalue;i++)
 		{
 			cout<< " "<< sumpidHistogramElectron[i];
 		}
 		cout << endl;
 
 		cout << "Pion distribution: "<< endl;
-		for(int i=0;i<256;i++)
+		for(int i=0;i<maxPIDvalue;i++)
 		{
 			cout<<" "<<sumpidHistogramPion[i];
 		}
@@ -122,18 +84,16 @@ using namespace std;
 
 	}
 
-
-
+	// EDIT THIS METHOD TO CHANGE THE INPUT NEURON INFORMATION
 	void fillInputs(ParticleInformation &particle, NeuronLayers& neuronLayers)
 	{
-		for(int j=0;j<27;j++)
+		for(int j=0;j<numInputs;j++)
 		{
-			//cout << " "<<particle.getTimeBin()[j]/ (float)( MaxTimeBinValue);
 			neuronLayers.fillInputNeuron(j, particle.getTimeBin()[j]/ (float)( MaxTimeBinValue));
 		}
-		//cout <<endl;
 	}
 
+	// EDIT THIS METHOD TO CHANGE THE TARGET VALUES
 	void fillTargets(ParticleInformation &particle, NeuronLayers& neuronLayers)
 	{
 		float target;
@@ -148,29 +108,34 @@ using namespace std;
 		}
 	}
 
-	void fillNeuralNetworkPIDs(vector<ParticleInformation>& particles, NeuronLayers& neuronLayers, int begin)
+	float fillNeuralNetworkPIDs(vector<ParticleInformation>& particles, NeuronLayers& neuronLayers, int begin, int end)
 	{		
-
-		for(int u=begin;u<particles.size();u++)
+		float sumError=0;
+		for(int u=begin;u<end;u++)
 		{
 			ParticleInformation particle = particles[u];
 			
 			fillInputs(particle, neuronLayers);
+			fillTargets(particle, neuronLayers);
 			neuronLayers.forwardPass();
 
 			for(int i=0; i<numOutputs;i++)
 			{
-				particles[u].setNeuralNetworkPID( (int) (neuronLayers.getOutput(i)*255) );
+				particles[u].setNeuralNetworkPID( (int) (neuronLayers.getOutput(i)*(maxPIDvalue-1)) );
+				sumError +=neuronLayers.getErrorOutput(i);
 			}
 		}
+
+		sumError = (float) sqrt(sumError/(float)(end-begin));
+		return sumError;
 	}
 
-	void makeNeuralNetworkHistogram(vector<ParticleInformation>& particles, int begin)
+	void makeNeuralNetworkHistogram(vector<ParticleInformation>& particles, int begin, int end)
 	{
-		std::fill(pidNNHistogramElectron, pidNNHistogramElectron+256,0);
-		std::fill(pidNNHistogramPion, pidNNHistogramPion+256,0);
+		std::fill(pidNNHistogramElectron, pidNNHistogramElectron+maxPIDvalue,0);
+		std::fill(pidNNHistogramPion, pidNNHistogramPion+maxPIDvalue,0);
 
-		for(int i=begin;i<particles.size();i++)
+		for(int i=begin;i<end;i++)
 		{
 			ParticleInformation particle = particles[i];
 
@@ -189,14 +154,14 @@ using namespace std;
 	void printNeuralNetworkHistogram()
 	{
 		cout << "Electron Histogram" << endl;
-		for(int i=0;i<256;i++)
+		for(int i=0;i<maxPIDvalue;i++)
 		{
 			cout << " " << pidNNHistogramElectron[i];
 		}
 		cout<< endl;
 
 		cout << "Pion Histogram" << endl;
-		for(int i=0;i<256;i++)
+		for(int i=0;i<maxPIDvalue;i++)
 		{
 			cout << " " << pidNNHistogramPion[i];
 		}
@@ -207,7 +172,7 @@ using namespace std;
 	{
 		int numP=0;
 		int histogramLayerNo=0;
-		for(int i=0;i<256;i++)
+		for(int i=0;i<maxPIDvalue;i++)
 		{
 			numP+=pidNNHistogramPion[i];
 			if(numP>=nintyPercentPions)
@@ -223,15 +188,14 @@ using namespace std;
 			numE+=pidNNHistogramElectron[i];
 		}
 
-		//return histogramLayerNo;
 		return numE;
 	}
 
-	void calculateNumbersOfParticles(vector<ParticleInformation>& particles, int begin)
+	void calculateNumbersOfParticles(vector<ParticleInformation>& particles, int begin, int end)
 	{
 		numElectrons=0;
 		numPions=0;
-		for(int i=begin;i<particles.size();i++)
+		for(int i=begin;i<end;i++)
 		{
 			if(particles[i].getType()=="ELECTRON")
 				numElectrons++;
@@ -243,13 +207,14 @@ using namespace std;
 
 	int main(int argc, char const *argv[])
 	{
-	 	MaxTimeBinValue = 4*1024;	
+
+	 	
 	 	std::srand ( unsigned ( std::time(0) ) );
 	// 	cout << "Creating PID Generator Using Neural Networks" << endl;
 
 	 	DataRetrieval dr(argv[1]);
 	 	particles = dr.getParticles();
-	 	calculateNumbersOfParticles(particles,0);
+	 	calculateNumbersOfParticles(particles,0, particles.size());
 
 	 	//SHUFFLE WILL MESS OUTPUT UP.. BUT STILL NEED TO SHUFFLE FOR THE NEURAL NETWORK
 	 	std::random_shuffle ( particles.begin(), particles.end() );
@@ -264,7 +229,6 @@ using namespace std;
 	//	displayParticles();
 	//	summationMethod();
 
-		numInputs=27;
 		numHiddenLayers =atoi(argv[2]);
 		numHiddenNodes = atoi(argv[3]);
 		numOutputs = atoi(argv[4]);
@@ -280,16 +244,15 @@ using namespace std;
 	
 		NeuronLayers neuronLayers(numInputs, numHiddenLayers, numHiddenNodes, numOutputs);
 
-		// neuronLayers.displayNeuronNetwork();
-		// neuronLayers.displayLinkNetwork();
-
-		calculateNumbersOfParticles(particles,particles.size()* trainPercent);
+		// FOR TRAINED DATA
+		calculateNumbersOfParticles(particles,0, particles.size()*trainPercent);
 
 
 		int generations = atoi(argv[5]);
 		for(int i=0;i<generations;i++)
 		{
-		//	cout << "Generation No: "<< i<< " out of " << generations << endl;
+
+			clog << "Generation No: "<< i<< " out of " << generations ;//<< endl;
 			for(int u=0;u<particles.size()*trainPercent;u++) 
 			{
 				ParticleInformation particle = particles[u];
@@ -297,43 +260,56 @@ using namespace std;
 				fillInputs(particle, neuronLayers);
 				fillTargets(particle, neuronLayers);
 
-				// neuronLayers.displayNeuronNetwork();
-				// neuronLayers.displayLinkNetwork();
-
 				neuronLayers.forwardPass();
-
-				// neuronLayers.displayNeuronNetwork();
-				// neuronLayers.displayLinkNetwork();
 
 				neuronLayers.backwardPass();
 			}
-			// neuronLayers.displayNeuronNetwork();
-			// neuronLayers.displayLinkNetwork();
-			// fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent);	
-			// makeNeuralNetworkHistogram(particles, particles.size()* trainPercent);
-			// //printNeuralNetworkHistogram();
-			// int electronNo = calcEfficiency(numPions*0.9);
 
-			// cout<< "Effiency (Histogram Layer count): " << electronNo <<endl;
+			// extra information
+			float rmsError = fillNeuralNetworkPIDs(particles,neuronLayers, 0,particles.size()* trainPercent);
+			makeNeuralNetworkHistogram(particles, 0,particles.size()* trainPercent);	
+			int eNo = calcEfficiency( (int) (numPions*0.9));
+			clog << " Effiency Trained: " << eNo /(double) numElectrons; //<<endl;
+			clog << " Error: " << rmsError <<endl;
+			// end of extra information
 		}
 
-		
-		
-	//	calculateNumbersOfParticles(particles,particles.size()* trainPercent);
+		// TRAINED RESULTS
+		cout << "============================="<< endl;
+		cout << "Trained Results" << endl;
 
+
+		float rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, 0,particles.size()* trainPercent);
+
+		makeNeuralNetworkHistogram(particles, 0,particles.size()* trainPercent);
+		printNeuralNetworkHistogram();
+
+		cout << "Trained Number of Pions: "<< numPions << endl;
+		cout << "Trained Number of Electrons: "<< numElectrons << endl;
+
+		int electronNo = calcEfficiency( (int) (numPions*0.9));
 		
+		cout<< "Effiency Trained: " << electronNo /(double) numElectrons <<endl;
+		cout << "Error Trained: " << rmsError <<endl;
 
-		fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent);
 
-		makeNeuralNetworkHistogram(particles, particles.size()* trainPercent);
+		// UNTRAINED RESULTS
+		cout << "============================="<< endl;
+		cout << "Untrained Results" << endl;
+		calculateNumbersOfParticles(particles,particles.size()*trainPercent, particles.size());
+
+		rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent, particles.size());
+
+		makeNeuralNetworkHistogram(particles, particles.size()* trainPercent, particles.size());
 		printNeuralNetworkHistogram();
 
 		cout << "Untrained Number of Pions: "<< numPions << endl;
 		cout << "Untrained Number of Electrons: "<< numElectrons << endl;
 
-		int electronNo = calcEfficiency(numPions*0.9);
+		electronNo = calcEfficiency((int)(numPions*0.9));
 
-		cout<< "Effiency (Electron count): " << electronNo <<endl;
+		cout<< "Effiency Untrained: " << electronNo /(double) numElectrons <<endl;
+		cout << "Error Untrained: " << rmsError <<endl;
 		return 0;
 	}
 

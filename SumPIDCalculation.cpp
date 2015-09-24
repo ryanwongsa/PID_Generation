@@ -19,16 +19,14 @@
 	{
 		for(int i=0;i<27;i++)
 		{
-	//		cout << timebin[i] << " ";
 			sum+=timebin[i];
 		}
-//		cout << sum<< " " << getSum()<< endl;
 	}
 
-	void SumPIDCalculation :: setPID(int min, int max) 
+	void SumPIDCalculation :: setPID(int min, int max, int maxPID) 
 	{
 		int total = max-min;
-		pid = (int) ( ((sum-min)/((double)total)) * 255 );
+		pid = (int) ( ((sum-min)/((double)total)) * maxPID );
 
 	}
 
