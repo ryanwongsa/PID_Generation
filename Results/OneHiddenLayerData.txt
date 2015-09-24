@@ -1,0 +1,9 @@
+==========================================================
+Beginning PID Generation
+Total Number of Pions: 6010
+Total Number of Electrons: 5766
+Starting Neural Network
+Number of Inputs: 27
+Number of Hidden Layers: 1
+Number of Hidden Nodes: 4
+Number of Outputs: 1
