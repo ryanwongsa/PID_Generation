@@ -24,8 +24,8 @@ class NeuronLayers
 	int numOutput;
 	int numNeuronLayers;
 
-	float LEARNING_RATE = (float) 1;
-	float MOMENTUM = (float) 1;
+	float LEARNING_RATE = (float) 0.5;
+	float MOMENTUM = (float) 0.7;
 
 	vector<vector<Neuron>> neuron;
  
