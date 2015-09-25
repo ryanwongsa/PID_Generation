@@ -10,6 +10,7 @@ class ParticleInformation
 	int pid;
 	int sumPid;
 	bool help;
+	float deviation;
 
 public:
 
@@ -25,4 +26,8 @@ public:
 	int getSumPID() const;
 	void helper(bool h);
 	bool getHelper();
+	void setTargetDeviation(float num);
+	float getTargetDeviation();
+
+
 };

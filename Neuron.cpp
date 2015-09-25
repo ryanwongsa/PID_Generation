@@ -4,12 +4,14 @@
 	{
 		in =0;
 		a=0;
+		deviation=0;
 	}
 
 	Neuron :: Neuron(int v)
 	{
 		a = v;
 		in =0;
+		deviation=0;
 	}
 
 	float Neuron :: getA() const
@@ -68,3 +70,14 @@
 	{
 		return signalError;
 	}
+
+	void Neuron :: setTargetDeviation(float num)
+	{
+		deviation = num;
+	}
+
+	float Neuron :: getTargetDeviation()
+	{
+		return deviation;
+	}
+

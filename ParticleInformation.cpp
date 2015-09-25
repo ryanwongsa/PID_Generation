@@ -65,3 +65,13 @@
 	{
 		return help;
 	}
+
+	void ParticleInformation :: setTargetDeviation(float num)
+	{
+		deviation = num;
+	}
+
+	float ParticleInformation :: getTargetDeviation()
+	{
+		return deviation;
+	}

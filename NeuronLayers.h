@@ -11,6 +11,7 @@
 #include <stdio.h>   
 #include <cstdlib>
 #include <ctime> 
+#include <cmath>        // std::abs
 
 #define SQR(A) ( (A) * (A) ) 
 
@@ -45,5 +46,7 @@ public:
 	void backwardPass();
 	float getOutput(int i);
 	float getErrorOutput(int i);
+	void setDeviation(float dev, int i);
+
 };
 

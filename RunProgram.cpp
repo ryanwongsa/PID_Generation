@@ -10,7 +10,7 @@
 			{
 				cout << " " << particles[j].getTimeBin()[i];
 			}
-			cout << endl;
+			cout <<  "Deviation: " << particles[j].getTargetDeviation() <<endl;
 		}
 	}
 
@@ -105,7 +105,9 @@
 		for(int i=0;i<numOutputs; i++)
 		{
 			neuronLayers.setTarget(target, i);
+			neuronLayers.setDeviation(particle.getTargetDeviation(), i);
 		}
+
 	}
 
 	float fillNeuralNetworkPIDs(vector<ParticleInformation>& particles, NeuronLayers& neuronLayers, int begin, int end)
@@ -204,6 +206,97 @@
 		}
 	}
 
+	void deviationDistribution(vector<ParticleInformation>& particles)
+	{
+		vector<SumPIDCalculation> v;
+
+		int max=0;
+		int min =27*1024*4;
+		int midPointE;
+		int midPointP;
+
+		for(int i=0;i<particles.size();i++)
+		{
+			ParticleInformation particle = particles[i];
+			SumPIDCalculation sumCal(particle);
+			v.push_back(sumCal);
+
+			if(max<sumCal.getSum())
+				max=sumCal.getSum();
+			
+			if(min>sumCal.getSum())
+				min=sumCal.getSum();
+		}
+
+		for(int u=0;u<particles.size();u++)
+		{
+			v[u].setPID(min, max,99);
+		}
+
+		int sumpidHistogramElectron[100];
+		std::fill(sumpidHistogramElectron, sumpidHistogramElectron+100,0);
+		int sumpidHistogramPion[100];
+		std::fill(sumpidHistogramPion, sumpidHistogramPion+100,0);
+
+
+
+		for(int i=0;i<particles.size();i++)
+		{
+			ParticleInformation particle = particles[i];
+
+			string type = particle.getType();
+			if(type==("ELECTRON"))
+			{
+				sumpidHistogramElectron[v[i].getPID()]++;
+			} 
+			else if(type==("PION"))
+			{
+				sumpidHistogramPion[v[i].getPID()]++;
+			}
+		}
+
+		int maxElectron=0;
+		int maxPion=0;
+		int electronMP=0;
+		int pionMP=0;
+
+		for(int i=0;i<100;i++)
+		{
+			if(sumpidHistogramElectron[i]>maxElectron)
+			{
+				maxElectron=sumpidHistogramElectron[i];
+				electronMP=i;
+			}
+		}
+
+		for(int i=0;i<100;i++)
+		{
+			if(sumpidHistogramPion[i]>maxPion)
+			{
+				maxPion=sumpidHistogramPion[i];
+				pionMP=i;
+			}
+		}
+
+		for(int i=0;i<particles.size();i++)
+		{
+			ParticleInformation particle = particles[i];
+			float deviation=0;
+			string type = particle.getType();
+			if(type==("ELECTRON"))
+			{
+				deviation = 1 - sumpidHistogramElectron[v[i].getPID()]/(float) maxElectron;
+			} 
+			else if(type==("PION"))
+			{
+				deviation = 1 - sumpidHistogramPion[v[i].getPID()]/(float) maxPion;
+			}
+
+			deviation = deviation*deviationScaleFactor;
+			particles[i].setTargetDeviation(deviation);
+		}
+
+	}
 
 	int main(int argc, char const *argv[])
 	{
@@ -214,6 +307,9 @@
 
 	 	DataRetrieval dr(argv[1]);
 	 	particles = dr.getParticles();
+
+	 	deviationDistribution(particles);	//NEW METHOD HERE
+
 	 	calculateNumbersOfParticles(particles,0, particles.size());
 
 	 	//SHUFFLE WILL MESS OUTPUT UP.. BUT STILL NEED TO SHUFFLE FOR THE NEURAL NETWORK

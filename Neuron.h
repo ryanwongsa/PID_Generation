@@ -11,6 +11,7 @@ class Neuron
 	float target;
 	float signalError;
 	float activationValue;
+	float deviation;
 
 public:
 	Neuron();
@@ -27,4 +28,6 @@ public:
 	float getActivation(float x);
 	float getDerivIn();
 	void setInput(float x);
+	void setTargetDeviation(float num);
+	float getTargetDeviation();
 };

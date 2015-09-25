@@ -102,6 +102,11 @@ void NeuronLayers :: setTarget(float target, int i)
 	neuron[numNeuronLayers-1][i].setTarget(target);
 }
 
+void NeuronLayers :: setDeviation(float dev, int i)
+{
+	neuron[numNeuronLayers-1][i].setTargetDeviation(dev);
+}
+
 void NeuronLayers :: displayNeuronNetwork()
 {
 	cout << "======================================================================" << endl;
@@ -161,16 +166,26 @@ void NeuronLayers :: forwardPass()
 
 float NeuronLayers :: getErrorOutput(int i)
 {
-	// cout << endl;
-	// cout << neuron[numNeuronLayers-1][i].getTarget()<<"->"<<neuron[numNeuronLayers-1][i].getA() << " error : "<<SQR(neuron[numNeuronLayers-1][i].getTarget()-neuron[numNeuronLayers-1][i].getA()) << endl;
-	return SQR(neuron[numNeuronLayers-1][i].getTarget()-neuron[numNeuronLayers-1][i].getA());
+	float difference = (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
+		
+	if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
+			difference=0;	//Can possibly Modify this section
+
+	return SQR(difference);
 }
 
 void NeuronLayers :: backwardPass()
 {
 	for(int i=0;i<neuron[numNeuronLayers-1].size();i++)
 	{
-		float error = neuron[numNeuronLayers-1][i].getDerivIn() * (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
+		float difference = (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
+
+		//------MODIFICATIONS-----
+		if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
+			difference=0;	// can possiby modify this section
+		//------MODIFICATIONS END-----
+
+		float error = neuron[numNeuronLayers-1][i].getDerivIn() * difference; //(neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
 		neuron[numNeuronLayers-1][i].setError(error);
 	}
 

@@ -32,6 +32,8 @@ using namespace std;
 	int numElectrons=0;
 	int numPions=0;
 
+	float deviationScaleFactor =0.4;
+
 	int MaxTimeBinValue = 4*1024;
 	vector<SumPIDCalculation> pidParticle;
 
@@ -47,3 +49,5 @@ using namespace std;
 	int calcEfficiency(int nintyPercentPions);
 	int main(int argc, char const *argv[]);
 	float getNeuralNetworkError(NeuronLayers neuronLayers);
+	void deviationDistribution(vector<ParticleInformation>& particles);
+
