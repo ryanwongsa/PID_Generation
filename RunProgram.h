@@ -21,7 +21,7 @@ using namespace std;
 	vector<ParticleInformation> particles;
 	int numHiddenLayers;
 	int numHiddenNodes;
-	int numInputs=27;
+	int numInputs=9; //27
 	int numOutputs;
 
 	const int maxPIDvalue=256;

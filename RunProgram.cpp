@@ -109,8 +109,14 @@
 	{
 		for(int j=0;j<numInputs;j++)
 		{
-			neuronLayers.fillInputNeuron(j, particle.getTimeBin()[j]/ (float)( MaxTimeBinValue));
+			float sum=0;
+			for(int i=j*3;i<j*3+3;i++)
+			{
+				sum+=particle.getTimeBin()[i]/ (float)( MaxTimeBinValue);
+			}
+			neuronLayers.fillInputNeuron(j, sum);
 		}
+
 	}
 
 	// EDIT THIS METHOD TO CHANGE THE TARGET VALUES
