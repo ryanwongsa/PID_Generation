@@ -342,7 +342,7 @@
 
 	 //	cout << particles.size() << endl;
 
-		cout << "Summation Method" << endl;
+		cout << "=======================Summation Method==================" << endl;
 	//	displayParticles();
 		summationMethod();
 
