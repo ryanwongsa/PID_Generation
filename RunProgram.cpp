@@ -341,15 +341,67 @@
 		NeuronLayers neuronLayers(numInputs, numHiddenLayers, numHiddenNodes, numOutputs);
 
 		// FOR TRAINED DATA
-		calculateNumbersOfParticles(particles,0, particles.size()*trainPercent);
+		int numTrainedParticles =particles.size()*trainPercent;
 
+		calculateNumbersOfParticles(particles,0, numTrainedParticles);
+
+
+		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< endl;
+		cout << "Total Number of Pions Pre-Trained: "<< numPions << endl;
+		cout << "Total Number of Electrons Pre-Trained: "<< numElectrons << endl;
+		cout << "NumTrained Pre-Trained: "<< numTrainedParticles << endl;
+		//=================GET 50/50 PION ELECTRON RATIO============
+		
+		int difference = numPions - numElectrons;
+		int differenceOriginal =difference;
+		cout << "Difference: "<< difference << endl;
+
+		if(difference >0)
+		{
+			int count=0;
+			while(difference >0)
+			{
+				//cout<< particles[count].getType() << count <<endl;
+				if(particles[count].getType()=="PION")
+				{
+					//cout<< particles[count].getType() << " REMOVED "<< count<< endl;
+					particles.erase(particles.begin()+count);
+					difference--;
+				}
+				else
+					count++;
+			}
+		}
+		else if(difference <0)
+		{
+			int count=0;
+			while(difference <0)
+			{
+				if(particles[count].getType()=="ELECTRON")
+				{
+					particles.erase(particles.begin()+count);
+					difference++;
+				}
+				else
+					count++;
+			}
+		}
+		numTrainedParticles=numTrainedParticles-abs(differenceOriginal);
+		calculateNumbersOfParticles(particles,0, numTrainedParticles);
+
+		cout << "Total Number of Pions Trained: "<< numPions << endl;
+		cout << "Total Number of Electrons Trained: "<< numElectrons << endl;
+		cout << "NumTrained: "<< numTrainedParticles << endl;
+		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< endl;
+		//==========================================================
 
 		int generations = atoi(argv[5]);
 		for(int i=0;i<generations;i++)
 		{
+			std::random_shuffle ( particles.begin(), particles.begin()+numTrainedParticles );
 
 			clog << "Generation No: "<< i<< " out of " << generations ;//<< endl;
-			for(int u=0;u<particles.size()*trainPercent;u++) 
+			for(int u=0;u<numTrainedParticles;u++) 
 			{
 				ParticleInformation particle = particles[u];
 
@@ -362,8 +414,8 @@
 			}
 
 			// extra information
-			float rmsError = fillNeuralNetworkPIDs(particles,neuronLayers, 0,particles.size()* trainPercent);
-			makeNeuralNetworkHistogram(particles, 0,particles.size()* trainPercent);	
+			float rmsError = fillNeuralNetworkPIDs(particles,neuronLayers, 0,numTrainedParticles);
+			makeNeuralNetworkHistogram(particles, 0,numTrainedParticles);	
 			int eNo = calcEfficiency( (int) (numPions*0.9));
 			clog << " Effiency Trained: " << eNo /(double) numElectrons; //<<endl;
 			clog << " Error: " << rmsError <<endl;
@@ -375,9 +427,9 @@
 		cout << "Trained Results" << endl;
 
 
-		float rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, 0,particles.size()* trainPercent);
+		float rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, 0,numTrainedParticles);
 
-		makeNeuralNetworkHistogram(particles, 0,particles.size()* trainPercent);
+		makeNeuralNetworkHistogram(particles, 0,numTrainedParticles);
 		printNeuralNetworkHistogram();
 
 		cout << "Trained Number of Pions: "<< numPions << endl;
@@ -392,11 +444,11 @@
 		// UNTRAINED RESULTS
 		cout << "============================="<< endl;
 		cout << "Untrained Results" << endl;
-		calculateNumbersOfParticles(particles,particles.size()*trainPercent, particles.size());
+		calculateNumbersOfParticles(particles,numTrainedParticles, particles.size());
 
-		rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, particles.size()*trainPercent, particles.size());
+		rmsError =fillNeuralNetworkPIDs(particles,neuronLayers, numTrainedParticles, particles.size());
 
-		makeNeuralNetworkHistogram(particles, particles.size()* trainPercent, particles.size());
+		makeNeuralNetworkHistogram(particles, numTrainedParticles, particles.size());
 		printNeuralNetworkHistogram();
 
 		cout << "Untrained Number of Pions: "<< numPions << endl;
