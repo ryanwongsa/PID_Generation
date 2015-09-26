@@ -82,6 +82,26 @@
 		}
 		cout << endl;
 
+		int numP=0;
+		int histogramLayerNo=0;
+		for(int i=0;i<maxPIDvalue;i++)
+		{
+			numP+=sumpidHistogramPion[i];
+			if(numP>=numPions*0.9)
+			{
+				histogramLayerNo=i;
+				break;
+			}
+		}
+
+		int numE=0;
+		for(int i=0;i<histogramLayerNo;i++)
+		{
+			numE+=sumpidHistogramElectron[i];
+		}
+
+		cout << "Efficiency: " << numE / (float)numElectrons << endl;
+
 	}
 
 	// EDIT THIS METHOD TO CHANGE THE INPUT NEURON INFORMATION
@@ -322,8 +342,11 @@
 
 	 //	cout << particles.size() << endl;
 
+		cout << "Summation Method" << endl;
 	//	displayParticles();
-	//	summationMethod();
+		summationMethod();
+
+		cout << "===================End Summation Method==================" << endl;
 
 		numHiddenLayers =atoi(argv[2]);
 		numHiddenNodes = atoi(argv[3]);
