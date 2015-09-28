@@ -19,10 +19,14 @@
 using namespace std;
 
 	vector<ParticleInformation> particles;
+	vector<SumPIDCalculation> v;
 	int numHiddenLayers;
 	int numHiddenNodes;
-	int numInputs=9; //27
+	int numInputs=5; //27
 	int numOutputs;
+
+	float time_bin_index_electron[27];
+	float time_bin_index_pion[27];
 
 	const int maxPIDvalue=256;
 
@@ -39,6 +43,14 @@ using namespace std;
 	vector<SumPIDCalculation> pidParticle;
 
 
+	//INPUT DATA
+
+	float maxPIONvalue;
+	float maxELECTRONvalue;
+	float averagePIONvalue;
+	float averageElectronValue;
+
+
 	void displayParticles();
 	void summationMethod();
 	void calculateNumbersOfParticles(vector<ParticleInformation>& particles, int begin, int end);
@@ -51,4 +63,5 @@ using namespace std;
 	int main(int argc, char const *argv[]);
 	float getNeuralNetworkError(NeuronLayers neuronLayers);
 	void deviationDistribution(vector<ParticleInformation>& particles);
+	void timebinCalculationAverages(vector<ParticleInformation>& particles);
 

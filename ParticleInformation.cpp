@@ -75,3 +75,56 @@
 	{
 		return deviation;
 	}
+
+
+	void ParticleInformation :: setCluster(int num)
+	{
+		numClusters= num;
+	}
+
+	int ParticleInformation :: getCluster()
+	{
+		return numClusters;
+	}
+
+	void ParticleInformation :: setSumTB(int num)
+	{
+		sumTB=num;
+	}
+
+	int ParticleInformation :: getSumTB()
+	{
+		return sumTB;
+	}
+
+	void ParticleInformation :: setTBhighestCharge(int num)
+	{
+		TBhighestCharge = num;
+	}
+
+	int ParticleInformation :: getTBhighestCharge()
+	{
+		return TBhighestCharge;
+	}
+
+	void ParticleInformation :: setChargeSecond(float num)
+	{
+		chargeSecondCluster=num;
+	}
+
+	float ParticleInformation :: getChargeSecond()
+	{
+		return chargeSecondCluster;
+	}
+
+	void ParticleInformation :: setnumTBaboveAVGPion(int num)
+	{
+		numTBaboveAVGPion=num;
+	}
+
+	int ParticleInformation :: getnumTBaboveAVGPion()
+	{
+		return numTBaboveAVGPion;
+	}
+
+	

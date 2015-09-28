@@ -12,6 +12,18 @@ class ParticleInformation
 	bool help;
 	float deviation;
 
+	//features
+	int numTBaboveMAXPion;
+	int numTBaboveAVGElectron;
+
+	int numClusters;
+	int sumTB;
+	int TBhighestCharge;
+	float chargeSecondCluster;
+	int numTBaboveAVGPion;
+
+
+
 public:
 
 	ParticleInformation();
@@ -29,5 +41,19 @@ public:
 	void setTargetDeviation(float num);
 	float getTargetDeviation();
 
+	void setCluster(int num);
+	int getCluster();
+
+	void setSumTB(int num);
+	int getSumTB();
+
+	void setTBhighestCharge(int num);
+	int getTBhighestCharge();
+
+	void setChargeSecond(float num);
+	float getChargeSecond();
+
+	void setnumTBaboveAVGPion(int num);
+	int getnumTBaboveAVGPion();
 
 };

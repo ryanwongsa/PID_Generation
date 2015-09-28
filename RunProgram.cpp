@@ -104,18 +104,191 @@
 
 	}
 
+	void displayFeatures(vector<ParticleInformation>& particles)
+	{
+		int numElectronClusters[10];
+		std::fill(numElectronClusters, numElectronClusters+10,0);
+
+		int numPionClusters[10];
+		std::fill(numPionClusters, numPionClusters+10,0);
+
+		int numElectronSum[100];
+		std::fill(numElectronSum, numElectronSum+100,0);
+
+		int numPionSum[100];
+		std::fill(numPionSum, numPionSum+100,0);
+
+		int electronTB[27];
+		std::fill(electronTB, electronTB+27,0);
+
+		int pionTB[27];
+		std::fill(pionTB, pionTB+27,0);
+
+		for(int i=0;i<particles.size();i++)
+		{
+		//	cout << particles[i].getType() << ":"; //<< endl;
+		//	cout << "\t"<<particles[i].getnumTBaboveAVGPion() << endl;
+			if(particles[i].getType()=="ELECTRON")
+			{
+				numElectronClusters[particles[i].getCluster()]++;
+				numElectronSum[particles[i].getSumTB()]++;
+				electronTB[particles[i].getTBhighestCharge()]++;
+//				cout << "hred->Fill("<<particles[i].getTBhighestCharge()<<");"<< endl;
+
+			}
+			else
+			{
+				numPionClusters[particles[i].getCluster()]++;
+				numPionSum[particles[i].getSumTB()]++;
+				pionTB[particles[i].getTBhighestCharge()]++;
+			//	cout << "hblue->Fill("<<particles[i].getTBhighestCharge()<<");"<< endl;
+
+			}
+		}	
+
+		cout << "====================CLUSTER INFORMATION==========================" << endl;
+		cout << "ELECTRON"<< endl;
+		for(int i=0;i<5;i++)
+		{
+			cout << numElectronClusters[i] << " ";
+		}
+		cout << endl;
+
+		cout << "PION"<< endl;
+		for(int i=0;i<5;i++)
+		{
+			cout << numPionClusters[i] << " ";
+		}
+		cout << endl;
+
+		cout <<"====================SUMMATION INFORMATION==========================" << endl;
+		cout << "ELECTRON"<< endl;
+		for(int i=0;i<100;i++)
+		{
+			cout << numElectronSum[i] << " ";
+		}
+		cout << endl;
+
+		cout << "PION"<< endl;
+		for(int i=0;i<100;i++)
+		{
+			cout << numPionSum[i] << " ";
+		}
+		cout << endl;
+
+		cout <<"====================TIME BIN WITH HIGHEST CHARGE INFORMATION==========================" << endl;
+		cout << "ELECTRON"<< endl;
+		for(int i=0;i<27;i++)
+		{
+			cout << electronTB[i] << " ";
+		}
+		cout << endl;
+
+		cout << "PION"<< endl;
+		for(int i=0;i<27;i++)
+		{
+			cout << pionTB[i] << " ";
+		}
+		cout << endl;
+
+	}
+
+	void addFeatures(vector<ParticleInformation>& particles)
+	{
+
+		for(int j=0;j<particles.size();j++)
+		{
+			int numTBaboveAVGPion=0;
+			int numTBaboveMAXPion=0;
+			int numTBaboveAVGElectron=0;
+			int TBhighestCharge=0;
+			int numClusters=0;
+
+			float highCharge=0;
+			for(int i=0;i<27;i++)
+			{
+				if(particles[j].getTimeBin()[i]>maxPIONvalue)	//input 0
+				{
+					numTBaboveMAXPion++;
+				}
+
+				if(particles[j].getTimeBin()[i]>averagePIONvalue)	//input 2
+				{
+					numTBaboveAVGPion++;
+				}
+
+				if(highCharge<particles[j].getTimeBin()[i])	// input 1
+				{
+					highCharge=particles[j].getTimeBin()[i];
+					TBhighestCharge=i;
+				}
+
+				if(averageElectronValue<particles[j].getTimeBin()[i])	//input 3
+				{
+					numTBaboveAVGElectron++;
+				}
+
+			}
+
+			float clusterFactor = maxELECTRONvalue *0.1;
+			float thresholdCluster = maxELECTRONvalue - clusterFactor;
+			float chargeOnSecondCluster=0;
+			for(int i=1;i<27;i++)
+			{
+				if(particles[j].getTimeBin()[i]>thresholdCluster && particles[j].getTimeBin()[i-1]<thresholdCluster)
+				{
+					numClusters++;
+					if(numClusters>1)
+					{
+						while(particles[j].getTimeBin()[i]>thresholdCluster && particles[j].getTimeBin()[i-1]<thresholdCluster && i<27)
+						{
+							if(chargeOnSecondCluster<particles[j].getTimeBin()[i])
+								chargeOnSecondCluster=particles[j].getTimeBin()[i];
+							i++;
+						}
+					}
+				}
+			}	
+
+			particles[j].setCluster(numClusters);//divide by 10
+			particles[j].setSumTB(v[j].getPID());//divide by 100
+			particles[j].setTBhighestCharge(TBhighestCharge);	// not helpful (divide by 27)
+			particles[j].setChargeSecond(chargeOnSecondCluster); // divide by 1023
+			particles[j].setnumTBaboveAVGPion(numTBaboveAVGPion);	//helpful divide by 27
+
+		}
+	}
+
 	// EDIT THIS METHOD TO CHANGE THE INPUT NEURON INFORMATION
 	void fillInputs(ParticleInformation &particle, NeuronLayers& neuronLayers)
 	{
-		for(int j=0;j<numInputs;j++)
-		{
-			float sum=0;
-			for(int i=j*3;i<j*3+3;i++)
-			{
-				sum+=particle.getTimeBin()[i]/ (float)( MaxTimeBinValue);
-			}
-			neuronLayers.fillInputNeuron(j, sum);
-		}
+		// for(int j=0;j<numInputs;j++)
+		// {
+		// 	float sum=0;
+		// 	for(int i=j*3;i<j*3+3;i++)
+		// 	{
+		// 		sum+=particle.getTimeBin()[i]/ (float)( MaxTimeBinValue);
+		// 	}
+		// 	neuronLayers.fillInputNeuron(j, sum);
+		// }
+
+
+		// INPUT 0
+		neuronLayers.fillInputNeuron(0, particle.getCluster()/(float)10);
+
+		// INPUT 1
+		neuronLayers.fillInputNeuron(1, particle.getSumTB()/(float)100);
+
+		// INPUT 2
+		neuronLayers.fillInputNeuron(2, particle.getTBhighestCharge()/(float)27);
+
+		// INPUT 3
+		neuronLayers.fillInputNeuron(3, particle.getChargeSecond()/(float)1023);
+
+		// INPUT 4
+		neuronLayers.fillInputNeuron(4, particle.getnumTBaboveAVGPion()/(float)27);
+
+		//INPUT 5
 
 	}
 
@@ -234,7 +407,6 @@
 
 	void deviationDistribution(vector<ParticleInformation>& particles)
 	{
-		vector<SumPIDCalculation> v;
 
 		int max=0;
 		int min =27*1024*4;
@@ -324,6 +496,76 @@
 
 	}
 
+	void timebinCalculationAverages(vector<ParticleInformation>& particles)
+	{
+		std::fill(time_bin_index_electron, time_bin_index_electron+27,0);
+		std::fill(time_bin_index_pion, time_bin_index_pion+27,0);		
+
+		int countE=0;
+		int countP=0;
+		for(int i=0;i<particles.size();i++)
+		{
+			for(int j=0;j<27;j++)
+			{
+				if(particles[i].getType()=="ELECTRON")
+				{
+					time_bin_index_electron[j]+=particles[i].getTimeBin()[j];
+				}
+				else
+				{
+					time_bin_index_pion[j]+=particles[i].getTimeBin()[j];
+				}
+
+			}
+			if(particles[i].getType()=="ELECTRON")
+				countE++;
+			else
+				countP++;
+		}
+
+		for(int i=0;i<27;i++)
+		{
+			time_bin_index_pion[i]=time_bin_index_pion[i]/(float)(countP);
+			time_bin_index_electron[i]=time_bin_index_electron[i]/(float)(countE);
+		}
+
+
+		maxPIONvalue=0;
+		maxELECTRONvalue=0;
+		averagePIONvalue=0;
+		averageElectronValue=0;
+		//cout<< "ELECTRON AVERAGE TIME BIN" << endl;
+		for(int i=0;i<27;i++)
+		{
+			//for(int j=0;j<(int)time_bin_index_electron[i];j++)
+			//{
+			// cout<<"for(int i=0;i<"<<(int)time_bin_index_electron[i]<<";i++)"<< endl;
+			// 	cout <<"hred->Fill("<<i<<");"<<endl;
+			//}
+			averageElectronValue+=time_bin_index_electron[i];
+			if(maxELECTRONvalue<time_bin_index_electron[i])
+				maxELECTRONvalue=time_bin_index_electron[i];
+		//	cout << " " << (int)time_bin_index_electron[i];
+		}
+	//	cout << endl;
+
+		averageElectronValue=averageElectronValue/(float)27;
+
+//		cout<< "PION AVERAGE TIME BIN" << endl;
+		for(int i=0;i<27;i++)
+		{
+			// cout<<"for(int i=0;i<"<<(int)time_bin_index_pion[i]<<";i++)"<< endl;
+			// cout <<"hblue->Fill("<<i<<");"<<endl;
+
+			averagePIONvalue+=time_bin_index_pion[i];
+			if(maxPIONvalue<time_bin_index_pion[i])
+				maxPIONvalue=time_bin_index_pion[i];
+		//	cout << " " << (int)time_bin_index_pion[i];
+		}
+		averagePIONvalue=averagePIONvalue/(float)(27);
+		//cout << endl;
+	}
+
 	int main(int argc, char const *argv[])
 	{
 
@@ -333,8 +575,18 @@
 
 	 	DataRetrieval dr(argv[1]);
 	 	particles = dr.getParticles();
+	
 
-	 	deviationDistribution(particles);	//NEW METHOD HERE
+		deviationDistribution(particles);	// sum as a percentage distribution is in vector v
+
+
+	 	timebinCalculationAverages(particles);
+
+	 	addFeatures(particles);
+
+	 	displayFeatures(particles);
+
+
 
 	 	calculateNumbersOfParticles(particles,0, particles.size());
 
