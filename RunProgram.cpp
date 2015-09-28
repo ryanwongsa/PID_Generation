@@ -262,31 +262,31 @@
 	// EDIT THIS METHOD TO CHANGE THE INPUT NEURON INFORMATION
 	void fillInputs(ParticleInformation &particle, NeuronLayers& neuronLayers)
 	{
-		// for(int j=0;j<numInputs;j++)
-		// {
-		// 	float sum=0;
-		// 	for(int i=j*3;i<j*3+3;i++)
-		// 	{
-		// 		sum+=particle.getTimeBin()[i]/ (float)( MaxTimeBinValue);
-		// 	}
-		// 	neuronLayers.fillInputNeuron(j, sum);
-		// }
+		for(int j=0;j<9;j++)
+		{
+			float sum=0;
+			for(int i=j*3;i<j*3+3;i++)
+			{
+				sum+=particle.getTimeBin()[i]/ (float)( MaxTimeBinValue);
+			}
+			neuronLayers.fillInputNeuron(j, sum);
+		}
 
 
 		// INPUT 0
-		neuronLayers.fillInputNeuron(0, particle.getCluster()/(float)10);
+		neuronLayers.fillInputNeuron(9, particle.getCluster()/(float)10);
 
 		// INPUT 1
-		neuronLayers.fillInputNeuron(1, particle.getSumTB()/(float)100);
+		neuronLayers.fillInputNeuron(10, particle.getSumTB()/(float)100);
 
 		// INPUT 2
-		neuronLayers.fillInputNeuron(2, particle.getTBhighestCharge()/(float)27);
+		neuronLayers.fillInputNeuron(11, particle.getTBhighestCharge()/(float)27);
 
 		// INPUT 3
-		neuronLayers.fillInputNeuron(3, particle.getChargeSecond()/(float)1023);
+		neuronLayers.fillInputNeuron(12, particle.getChargeSecond()/(float)1023);
 
 		// INPUT 4
-		neuronLayers.fillInputNeuron(4, particle.getnumTBaboveAVGPion()/(float)27);
+		neuronLayers.fillInputNeuron(13, particle.getnumTBaboveAVGPion()/(float)27);
 
 		//INPUT 5
 
@@ -491,10 +491,11 @@
 			}
 
 			deviation = deviation*deviationScaleFactor;
-			particles[i].setTargetDeviation(deviation);
+			//particles[i].setTargetDeviation(deviation);
 		}
 
 	}
+	//TOOK OUT DEVIATION
 
 	void timebinCalculationAverages(vector<ParticleInformation>& particles)
 	{

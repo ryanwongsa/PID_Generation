@@ -22,7 +22,7 @@ using namespace std;
 	vector<SumPIDCalculation> v;
 	int numHiddenLayers;
 	int numHiddenNodes;
-	int numInputs=5; //27
+	int numInputs=14; //27
 	int numOutputs;
 
 	float time_bin_index_electron[27];
