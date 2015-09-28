@@ -168,8 +168,8 @@ float NeuronLayers :: getErrorOutput(int i)
 {
 	float difference = (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
 		
-	if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
-			difference=0;	//Can possibly Modify this section
+	// if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
+	// 		difference=0;	//Can possibly Modify this section
 
 	return SQR(difference);
 }
@@ -181,8 +181,8 @@ void NeuronLayers :: backwardPass()
 		float difference = (neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());
 
 		//------MODIFICATIONS-----
-		if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
-			difference=0;	// can possiby modify this section
+		// if( abs(difference)<neuron[numNeuronLayers-1][i].getTargetDeviation() )
+		// 	difference=0;	// can possiby modify this section
 		//------MODIFICATIONS END-----
 
 		float error = neuron[numNeuronLayers-1][i].getDerivIn() * difference; //(neuron[numNeuronLayers-1][i].getTarget() - neuron[numNeuronLayers-1][i].getA());

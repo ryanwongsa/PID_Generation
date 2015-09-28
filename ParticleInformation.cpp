@@ -5,6 +5,7 @@
 		type = "UNKNOWN";
 		timebin = new float[27];
 		std::fill(timebin, timebin+27,0);
+		deviation=0;
 		
 	}
 
@@ -13,6 +14,7 @@
 		type = t;
 		timebin = new float[27];
 		std::fill(timebin, timebin+27,0);
+		deviation=0;
 
 	}
 

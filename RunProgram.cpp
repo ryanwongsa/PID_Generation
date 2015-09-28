@@ -304,8 +304,24 @@
 		for(int i=0;i<numOutputs; i++)
 		{
 			neuronLayers.setTarget(target, i);
-			neuronLayers.setDeviation(particle.getTargetDeviation(), i);
+			//neuronLayers.setDeviation(particle.getTargetDeviation(), i);
 		}
+
+	//	cout <<particle.getType()<<" "<< particle.getTargetDeviation() << endl;
+
+		// int num = (int)particle.getTargetDeviation();
+		// for(int i=numOutputs-1;i>=0;i--)
+		// {
+		// //	cout << (int) ( num/(double)pow(2,i)) <<endl;
+		// 	float target=(int) ( num/(double)pow(2,i));
+		// 	if(target ==1)
+		// 		num= num-pow(2,i);
+		// 	else
+		// 	{}
+		// 	neuronLayers.setTarget(target, numOutputs-1-i);
+		// }
+
+		//neuronLayers.setTarget(, i);
 
 	}
 
@@ -320,11 +336,16 @@
 			fillTargets(particle, neuronLayers);
 			neuronLayers.forwardPass();
 
+			float pid=0;
 			for(int i=0; i<numOutputs;i++)
 			{
-				particles[u].setNeuralNetworkPID( (int) (neuronLayers.getOutput(i)*(maxPIDvalue-1)) );
+			//	particles[u].setNeuralNetworkPID( (int) (neuronLayers.getOutput(i)*(maxPIDvalue-1)) );
+				pid+=round(neuronLayers.getOutput(i))*pow(2,7-i);
 				sumError +=neuronLayers.getErrorOutput(i);
 			}
+			//cout << particles[u].getType() << " "<< pid << endl;
+			particles[u].setNeuralNetworkPID((int)pid);
+		//	sumError= sumError/(float)(numOutputs);
 		}
 
 		sumError = (float) sqrt(sumError/(float)(end-begin));
@@ -436,6 +457,8 @@
 		int sumpidHistogramPion[100];
 		std::fill(sumpidHistogramPion, sumpidHistogramPion+100,0);
 
+		
+		std::fill(sumpidHistogramGeneral, sumpidHistogramGeneral+100,0);
 
 
 		for(int i=0;i<particles.size();i++)
@@ -451,7 +474,11 @@
 			{
 				sumpidHistogramPion[v[i].getPID()]++;
 			}
+
+			sumpidHistogramGeneral[v[i].getPID()]++;
 		}
+
+
 
 		int maxElectron=0;
 		int maxPion=0;
@@ -465,10 +492,7 @@
 				maxElectron=sumpidHistogramElectron[i];
 				electronMP=i;
 			}
-		}
 
-		for(int i=0;i<100;i++)
-		{
 			if(sumpidHistogramPion[i]>maxPion)
 			{
 				maxPion=sumpidHistogramPion[i];
@@ -481,17 +505,31 @@
 			ParticleInformation particle = particles[i];
 			float deviation=0;
 			string type = particle.getType();
-			if(type==("ELECTRON"))
+		//	if(type==("ELECTRON"))
+		//	{
+				deviation = sumpidHistogramElectron[v[i].getPID()]/(float)(sumpidHistogramGeneral[v[i].getPID()]);//1 - sumpidHistogramElectron[v[i].getPID()]/(float) maxElectron;
+		//	} 
+		//	else if(type==("PION"))
+		//	{
+		//		deviation = 1 - sumpidHistogramPion[v[i].getPID()]/(float) maxPion;
+		//	}
+
+			cout << type << " " << deviation << " ";//<< endl;
+			if(type=="ELECTRON")
 			{
-				deviation = 1 - sumpidHistogramElectron[v[i].getPID()]/(float) maxElectron;
-			} 
-			else if(type==("PION"))
+			//	cout << (int) (deviation*(maxPIDvalue/((float)2)-1)+128) << endl;
+				deviation=(int) (deviation*(maxPIDvalue/((float)2)-1)+128);
+			}
+			else
 			{
-				deviation = 1 - sumpidHistogramPion[v[i].getPID()]/(float) maxPion;
+				deviation=1-deviation;
+			//	cout << (int) (deviation*(maxPIDvalue/((float)2)-1)) << endl;
+				deviation=(int) (deviation*(maxPIDvalue/((float)2)-1));
+
 			}
 
-			deviation = deviation*deviationScaleFactor;
-			//particles[i].setTargetDeviation(deviation);
+			
+			particles[i].setTargetDeviation(deviation);
 		}
 
 	}
@@ -609,7 +647,7 @@
 
 		numHiddenLayers =atoi(argv[2]);
 		numHiddenNodes = atoi(argv[3]);
-		numOutputs = atoi(argv[4]);
+		numOutputs = 8;//atoi(argv[4]);
 
 		double trainPercent =0.8;
 		double untrainedPercent = 1-trainPercent;

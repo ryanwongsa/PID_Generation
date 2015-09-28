@@ -28,6 +28,8 @@ using namespace std;
 	float time_bin_index_electron[27];
 	float time_bin_index_pion[27];
 
+	int sumpidHistogramGeneral[100];
+
 	const int maxPIDvalue=256;
 
 	int pidNNHistogramElectron[maxPIDvalue];
